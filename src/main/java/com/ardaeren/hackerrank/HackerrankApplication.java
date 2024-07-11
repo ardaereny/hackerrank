@@ -4,9 +4,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @SpringBootApplication
 public class HackerrankApplication {
@@ -41,31 +41,54 @@ public class HackerrankApplication {
     }
 
     public static long repeatedString(String s, long n){
-        // 2 durum var 1 -> string size ile n size birbirini katıysa
-        // stringdeki en çok tekrar eden sayının ne kadar geçtiğini bul
-        //  n/s.length kadar o sayıyı çarp
-        // 2-> string size ile n birbirinin katı değilse
-        // üssteki işlemleri yap + olarak n%s kalanını da contains...
-        long ekstraAsayisi;
-        long aTekrarSayisi;
 
-        List<Character> charList = new ArrayList<>();
-        for (char c : s.toCharArray()) {
-            charList.add(c);
-        }
-        aTekrarSayisi = charList.stream().filter(ch -> ch == 'a').count();
+        long aCountInString = s.chars().filter(ch -> ch == 'a').count();
 
+        long fullRepeats = n / s.length();
+        long remainingChars = n % s.length();
 
-        if(n%s.length() == 0){
-            return n/s.length() * aTekrarSayisi;
-        }
-        else{
-            var ekstraharfler = n % s.length();
-            var kalankelime = s.substring(0,(int) ekstraharfler);
-            ekstraAsayisi = kalankelime.chars().filter(ch -> ch == 'a').count();
-            return ekstraAsayisi + n/s.length() * aTekrarSayisi;
-        }
+        long totalCount = fullRepeats * aCountInString;
+
+        totalCount += s.substring(0, (int) remainingChars).chars().filter(ch -> ch == 'a').count();
+
+        return totalCount;
     }
+
+    public int romanToInt(String s) {
+
+        //LVIII,MCMXCIV= 1994
+        List<Integer> valueList = new ArrayList<>();
+        List<Integer> wishList = new ArrayList<>();
+        Map<Character, Integer> romanValues = new HashMap<>();
+
+        romanValues.put('I', 1);
+        romanValues.put('V', 5);
+        romanValues.put('X', 10);
+        romanValues.put('L', 50);
+        romanValues.put('C', 100);
+        romanValues.put('D', 500);
+        romanValues.put('M', 1000);
+
+        for(int i = 0; i < s.length(); i++){
+          valueList.add(romanValues.get(s.charAt(i)));
+        }
+
+        for(int i = 0; i < valueList.size(); i++){
+            if(i == valueList.size() -1){
+                wishList.add(valueList.get(i));
+            }
+            else if(valueList.get(i) >= valueList.get(i + 1)){
+                wishList.add(valueList.get(i));
+            }
+            else {
+                int i1 = valueList.get(i + 1) - valueList.get(i);
+                wishList.add(i1);
+                i++;
+            }
+        }
+    return wishList.stream().reduce(0,Integer::sum);
+}
+
 
 }
 
